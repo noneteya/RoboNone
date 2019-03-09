@@ -2,8 +2,18 @@ import discord
 from discord.ext import commands
 from . import discord_db
 import typing
+from dotenv import load_dotenv
+import os
+from pathlib import Path
 
-DB_GUILD_ID = 553724445156704281
+# DB_GUILD_ID = 553724445156704281
+
+if not os.getenv("ON_SERVER"):
+    # ローカルで走らせる場合
+    env_path = Path('./..') / '.env.local'
+    load_dotenv(dotenv_path=env_path)
+
+DB_GUILD_ID = os.getenv("DB_GUILD_ID")
 
 
 def setup(bot):
