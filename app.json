@@ -1,0 +1,19 @@
+{
+  "name": "YasashiiKakumeiLab",
+  "description": "YasashiiKakumeiLab RoleManageBot",
+  "keywords": [],
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Discord bot token"
+    }
+  },
+  "formation": {
+    "bot": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "scripts": {
+    "postdeploy": "git submodule update --init"
+  }
+}
