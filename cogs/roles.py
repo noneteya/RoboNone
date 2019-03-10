@@ -13,7 +13,7 @@ if not os.getenv("ON_SERVER"):
     env_path = Path('./..') / '.env.local'
     load_dotenv(dotenv_path=env_path)
 
-DB_GUILD_ID = os.getenv("DB_GUILD_ID")
+DB_GUILD_ID = int(os.getenv("DB_GUILD_ID"))
 
 
 def setup(bot):
