@@ -1,5 +1,5 @@
 # -*- coding=utf-8 -*-
-from bot import ManagementBot
+from bot import RoboNone
 from dotenv import load_dotenv
 from pathlib import Path
 import sys
@@ -12,5 +12,5 @@ if not os.getenv("ON_SERVER"):
 print(os.getenv("BOT_TOKEN"), file=sys.stderr)
 sys.stderr.flush()
 
-management_bot = ManagementBot()
-management_bot.run(os.getenv("BOT_TOKEN"))
+robo_none = RoboNone()
+robo_none.run(os.getenv("BOT_TOKEN"))
