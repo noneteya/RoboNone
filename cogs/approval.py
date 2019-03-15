@@ -21,6 +21,8 @@ class Approval:
         pass
 
     async def on_reaction_add(self, reaction, user):
+        if len(reaction.message.author.roles) != 1:
+            return
         if user == self.bot.user:
             return
         if user == reaction.message.author:
