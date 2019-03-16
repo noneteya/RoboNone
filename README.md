@@ -1,6 +1,8 @@
 # RoboNone
 
-discordサーバー管理bot
+シンプルな多機能サーバー管理Bot.
+
+## ファイル構成
 
 `bot.py` Botのメインファイル  
 `run.py` 実行するファイル (secret tokenあり)  
@@ -21,3 +23,5 @@ prefix + 短い要約(日本語)
 `refactor:` リファクタリング  
 `remove:` ファイルの削除  
 `fix:` バグの修正  
+
+(c) Noneteya 2019
