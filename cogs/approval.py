@@ -39,6 +39,8 @@ class Approval:
             if reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
                 await reaction.message.author.add_roles(role)
+                role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
+                await reaction.message.author.remove_roles(role)
                 await reaction.message.channel.send(f"{reaction.message.author.mention} あなたは承認されました！")
                 await reaction.message.delete()
             else:
