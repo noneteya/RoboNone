@@ -21,6 +21,7 @@ class Approval:
         pass
 
     async def on_reaction_add(self, reaction, user):
+
         has_prospect = False
         for role in reaction.message.author.roles:
             if role.name == "prospect":
@@ -37,7 +38,7 @@ class Approval:
         if reaction.emoji == "✅":
             if reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
-                reaction.message.author.add_roles(role)
+                await reaction.message.author.add_roles(role)
                 await reaction.message.channel.send(f"{reaction.message.author.mention} あなたは承認されました！")
                 await reaction.message.delete()
             else:
