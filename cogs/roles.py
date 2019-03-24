@@ -14,7 +14,7 @@ if not os.getenv("ON_SERVER"):
     env_path = Path('./..') / '.env.local'
     load_dotenv(dotenv_path=env_path)
 
-DB_URL = os.getenv("DB_URL")
+DB_URL = os.getenv("DATABASE_URL")
 
 
 def setup(bot):
