@@ -1,3 +1,0 @@
-[submodule "cogs/discord_db"]
-	path = cogs/discord_db
-	url = https://github.com/OgranStd/discord_db.git

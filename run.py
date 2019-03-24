@@ -9,7 +9,6 @@ if not os.getenv("ON_SERVER"):
     # ローカルで走らせる場合
     env_path = Path('.') / '.env.local'
     load_dotenv(dotenv_path=env_path)
-print(os.getenv("BOT_TOKEN"), file=sys.stderr)
 sys.stderr.flush()
 
 robo_none = RoboNone()
