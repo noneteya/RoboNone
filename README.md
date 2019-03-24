@@ -2,6 +2,9 @@
 
 シンプルな多機能サーバー管理Bot.
 
+## 使い方
+.env.sampleの、TOKENと、DBのURLを指定して、herokuに投げるだけ。
+
 ## ファイル構成
 
 `bot.py` Botのメインファイル  
