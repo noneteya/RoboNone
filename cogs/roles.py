@@ -69,7 +69,7 @@ class RoleManager:
             if role.id in attachables:
                 await ctx.send(f":warning: {role.name}はすでに編集可能です")
             else:
-                self.handler.insert_data((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
+                self.handler.insert((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
                 await ctx.send(":white_check_mark: 役職を編集できるように設定しました")
 
     @commands.command(aliases=["removeattach"])
@@ -80,7 +80,7 @@ class RoleManager:
                                                 where=f"guild_id = {ctx.author.guild.id}")
         for role in set(roles):
             if role.id in attachables:
-                self.handler.delete_data((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
+                self.handler.delete((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
                 await ctx.send(":white_check_mark: 役職を編集できないように設定しました")
             else:
 
