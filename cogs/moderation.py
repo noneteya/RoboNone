@@ -19,11 +19,16 @@ def setup(bot):
     bot.add_cog(Moderation(bot))
 
 
+def is_owner(ctx):
+    return ctx.author == ctx.guild.owner_id
+
+
 class Moderation:
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(hidden=True)
+    @commands.check(is_owner)
     async def sudo(self, ctx, who: Union[discord.Member, discord.User], *, command: str):
         """Run a command as another user."""
         msg = copy.copy(ctx.message)
