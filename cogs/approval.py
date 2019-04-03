@@ -12,6 +12,12 @@ def has_no_roles(ctx):
     return len(ctx.message.author.roles) == 1
 
 
+def has_prospect(member):
+    for role in member.roles:
+        if role.name == 'prospect':
+            return True
+
+
 class Approval:
     def __init__(self, bot):
         self.bot = bot
@@ -28,15 +34,7 @@ class Approval:
         else:
             user = self.bot.get_user(payload.user_id)
 
-        has_prospect = False
-        for role in message.author.roles:
-
-            if role.name == "prospect":
-                has_prospect = True
-        if not has_prospect:
-            return
-
-        if user == self.bot.user:
+        if user == self.bot.user or not has_prospect(message.author):
             return
 
         if user == message.author:
