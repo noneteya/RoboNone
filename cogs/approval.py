@@ -8,8 +8,14 @@ def setup(bot):
     bot.add_cog(Approval(bot))
 
 
-def hasnt_any_roles(ctx):
+def has_no_roles(ctx):
     return len(ctx.message.author.roles) == 1
+
+
+def has_prospect(member):
+    for role in member.roles:
+        if role.name == 'prospect':
+            return True
 
 
 class Approval:
@@ -24,23 +30,15 @@ class Approval:
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.get_message(payload.message_id)
         if message.guild:
-            user = message.guild.get_member(payload.user_id)
+            member = message.guild.get_member(payload.user_id)
         else:
-            user = self.bot.get_user(payload.user_id)
-
-        has_prospect = False
-        for role in message.author.roles:
-
-            if role.name == "prospect":
-                has_prospect = True
-        if not has_prospect:
             return
 
-        if user == self.bot.user:
+        if member == self.bot.user or not has_prospect(message.author):
             return
 
-        if user == message.author:
-            await message.remove_reaction(emoji, user)
+        if member == message.author or has_prospect(member) or len(member.roles) == 1:
+            await message.remove_reaction(emoji, member)
             return
 
         if emoji.name == "✅":
@@ -50,15 +48,15 @@ class Approval:
                 if reaction.emoji == "✅":
                     check_mark_reaction = reaction
 
-            if check_mark_reaction.count > 3:
-                role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
+            if check_mark_reaction and check_mark_reaction.count > 3:
+                role = discord.utils.find(lambda m: m.name == 'player', member.guild.roles)
                 await message.author.add_roles(role)
-                role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
+                role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
                 await message.channel.send(f"{message.author.mention} あなたは承認されました！")
                 await message.delete()
             else:
-                m = await message.channel.send(f"{user.mention} 申請を承認しました")
+                m = await message.channel.send(f"{member.mention} 申請を承認しました")
                 await asyncio.sleep(3)
                 await m.delete()
 
@@ -69,19 +67,19 @@ class Approval:
                 if reaction.emoji == "❎":
                     x_mark_reaction = reaction
 
-            if x_mark_reaction.count > 3:
+            if x_mark_reaction and x_mark_reaction.count > 3:
                 await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
             else:
-                m = await message.channel.send(f"{user.mention} 申請を否認しました")
+                m = await message.channel.send(f"{member.mention} 申請を否認しました")
                 await asyncio.sleep(5)
                 await m.delete()
 
         else:
-            await message.remove_reaction(emoji, user)
+            await message.remove_reaction(emoji, member)
 
     @commands.command()
-    @commands.check(hasnt_any_roles)
+    @commands.check(has_no_roles)
     async def agree(self, ctx):
         """承認待ちができます"""
         role = discord.utils.find(lambda m: m.name == 'prospect', ctx.guild.roles)
