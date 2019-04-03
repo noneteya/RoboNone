@@ -19,10 +19,17 @@ class Approval:
     async def on_ready(self):
         pass
 
-    async def on_reaction_add(self, reaction, user):
+    async def on_raw_reaction_add(self, payload):
+        emoji = payload.emoji
+        channel = self.bot.get_channel(payload.channel_id)
+        message = await channel.get_message(payload.message_id)
+        if message.guild:
+            user = message.guild.get_member(payload.user_id)
+        else:
+            user = self.bot.get_user(payload.user_id)
 
         has_prospect = False
-        for role in reaction.message.author.roles:
+        for role in message.author.roles:
             if role.name == "prospect":
                 has_prospect = True
         if not has_prospect:
@@ -30,29 +37,29 @@ class Approval:
 
         if user == self.bot.user:
             return
-        if user == reaction.message.author:
-            await reaction.remove(user)
+        if user == message.author:
+            await message.remove_reaction(emoji, user)
             return
 
-        if reaction.emoji == "✅":
+        if emoji == "✅":
             if reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
-                await reaction.message.author.add_roles(role)
+                await message.author.add_roles(role)
                 role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
-                await reaction.message.author.remove_roles(role)
-                await reaction.message.channel.send(f"{reaction.message.author.mention} あなたは承認されました！")
-                await reaction.message.delete()
+                await message.author.remove_roles(role)
+                await message.channel.send(f"{message.author.mention} あなたは承認されました！")
+                await message.delete()
             else:
-                m = await reaction.message.channel.send(f"{user.mention} 申請を承認しました")
+                m = await message.channel.send(f"{user.mention} 申請を承認しました")
                 await asyncio.sleep(5)
                 await m.delete()
 
         elif reaction.emoji == "❎":
             if reaction.count > 3:
-                await reaction.message.channel.send(f"{reaction.message.author.mention} 申請が否認されました")
-                await reaction.message.delete()
+                await message.channel.send(f"{message.author.mention} 申請が否認されました")
+                await message.delete()
             else:
-                m = await reaction.message.channel.send(f"{user.mention} 申請を否認しました")
+                m = await message.channel.send(f"{user.mention} 申請を否認しました")
                 await asyncio.sleep(5)
                 await m.delete()
 
