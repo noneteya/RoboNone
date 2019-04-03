@@ -48,7 +48,7 @@ class Approval:
                 if reaction.emoji == "✅":
                     check_mark_reaction = reaction
 
-            if check_mark_reaction.count > 3:
+            if check_mark_reaction and check_mark_reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
                 await message.author.add_roles(role)
                 role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
@@ -67,7 +67,7 @@ class Approval:
                 if reaction.emoji == "❎":
                     x_mark_reaction = reaction
 
-            if x_mark_reaction.count > 3:
+            if x_mark_reaction and x_mark_reaction.count > 3:
                 await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
             else:
