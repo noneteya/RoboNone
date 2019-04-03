@@ -8,7 +8,7 @@ def setup(bot):
     bot.add_cog(Approval(bot))
 
 
-def hasnt_any_roles(ctx):
+def has_no_roles(ctx):
     return len(ctx.message.author.roles) == 1
 
 
@@ -81,7 +81,7 @@ class Approval:
             await message.remove_reaction(emoji, user)
 
     @commands.command()
-    @commands.check(hasnt_any_roles)
+    @commands.check(has_no_roles)
     async def agree(self, ctx):
         """承認待ちができます"""
         role = discord.utils.find(lambda m: m.name == 'prospect', ctx.guild.roles)
