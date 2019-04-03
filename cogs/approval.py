@@ -54,7 +54,7 @@ class Approval:
                 await asyncio.sleep(5)
                 await m.delete()
 
-        elif reaction.emoji == "❎":
+        elif emoji == "❎":
             if reaction.count > 3:
                 await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
@@ -64,7 +64,7 @@ class Approval:
                 await m.delete()
 
         else:
-            await reaction.remove(user)
+            await message.remove_reaction(emoji, user)
 
     @commands.command()
     @commands.check(hasnt_any_roles)
