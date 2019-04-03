@@ -30,15 +30,15 @@ class Approval:
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.get_message(payload.message_id)
         if message.guild:
-            user = message.guild.get_member(payload.user_id)
+            member = message.guild.get_member(payload.user_id)
         else:
-            user = self.bot.get_user(payload.user_id)
-
-        if user == self.bot.user or not has_prospect(message.author):
             return
 
-        if user == message.author:
-            await message.remove_reaction(emoji, user)
+        if member == self.bot.user or not has_prospect(message.author):
+            return
+
+        if member == message.author:
+            await message.remove_reaction(emoji, member)
             return
 
         if emoji.name == "✅":
@@ -49,14 +49,14 @@ class Approval:
                     check_mark_reaction = reaction
 
             if check_mark_reaction and check_mark_reaction.count > 3:
-                role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
+                role = discord.utils.find(lambda m: m.name == 'player', member.guild.roles)
                 await message.author.add_roles(role)
-                role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
+                role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
                 await message.channel.send(f"{message.author.mention} あなたは承認されました！")
                 await message.delete()
             else:
-                m = await message.channel.send(f"{user.mention} 申請を承認しました")
+                m = await message.channel.send(f"{member.mention} 申請を承認しました")
                 await asyncio.sleep(3)
                 await m.delete()
 
@@ -71,12 +71,12 @@ class Approval:
                 await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
             else:
-                m = await message.channel.send(f"{user.mention} 申請を否認しました")
+                m = await message.channel.send(f"{member.mention} 申請を否認しました")
                 await asyncio.sleep(5)
                 await m.delete()
 
         else:
-            await message.remove_reaction(emoji, user)
+            await message.remove_reaction(emoji, member)
 
     @commands.command()
     @commands.check(has_no_roles)
