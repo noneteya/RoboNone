@@ -30,6 +30,7 @@ class Approval:
 
         has_prospect = False
         for role in message.author.roles:
+
             if role.name == "prospect":
                 has_prospect = True
         if not has_prospect:
@@ -37,12 +38,19 @@ class Approval:
 
         if user == self.bot.user:
             return
+
         if user == message.author:
             await message.remove_reaction(emoji, user)
             return
 
-        if emoji == "✅":
-            if reaction.count > 3:
+        if emoji.name == "✅":
+
+            check_mark_reaction = None
+            for reaction in message.reactions:
+                if reaction.emoji == "✅":
+                    check_mark_reaction = reaction
+
+            if check_mark_reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', user.guild.roles)
                 await message.author.add_roles(role)
                 role = discord.utils.find(lambda m: m.name == 'prospect', user.guild.roles)
@@ -51,11 +59,17 @@ class Approval:
                 await message.delete()
             else:
                 m = await message.channel.send(f"{user.mention} 申請を承認しました")
-                await asyncio.sleep(5)
+                await asyncio.sleep(3)
                 await m.delete()
 
-        elif emoji == "❎":
-            if reaction.count > 3:
+        elif emoji.name == "❎":
+
+            x_mark_reaction = None
+            for reaction in message.reactions:
+                if reaction.emoji == "❎":
+                    x_mark_reaction = reaction
+
+            if x_mark_reaction.count > 3:
                 await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
             else:
