@@ -38,7 +38,7 @@ class DBHandler:
 
         return output
 
-    def insert_data(self, data, column, table):
+    def insert(self, data, column, table):
         columns = f"{column}".replace("'","")
         datas = f"{data}".replace("'", "")
 
@@ -51,11 +51,26 @@ class DBHandler:
         self.conn.commit()
         cur.close()
 
-    def delete_data(self, data, column, table):
+    def delete(self, data, column, table):
         columns = f"{column}".replace("'", "")
         datas = f"{data}".replace("'", "")
 
         cmd = f"DELETE FROM {table} WHERE {columns} = {datas};"
+
+        self.conn = self.get_connection()
+        cur = self.conn.cursor()
+        cur.execute(cmd)
+        self.conn.commit()
+        cur.close()
+
+    def update(self, data, column, table, where=None):
+        columns = f"{column}".replace("'", "")
+        datas = f"{data}".replace("'", "")
+
+        if where is not None:
+            cmd = f"UPDATE {table} SET {column} = {data} WHERE {where}"
+        else:
+            cmd = f"UPDATE {table} SET {column} = {data}"
 
         self.conn = self.get_connection()
         cur = self.conn.cursor()
