@@ -37,7 +37,7 @@ class Approval:
         if member == self.bot.user or not has_prospect(message.author):
             return
 
-        if member == message.author or has_prospect(member):
+        if member == message.author or has_prospect(member) or len(member.roles) == 1:
             await message.remove_reaction(emoji, member)
             return
 
