@@ -1,27 +1,53 @@
 import psycopg2
 
-class DBHandler:
-    def __init__(self, db_url):
+
+class Handler:
+    def __init__(self, table_name=None, processing=None, *args, **kwargs):
+        self.table_name = table_name
+        self.processing = processing
+        self.args = args
+        self.kwargs = kwargs
+
+
+class DBManager:
+    def __init__(self, db_url, debug=False):
         self.db_url = db_url
         self.conn = None
+        self.debug = debug
 
     def get_connection(self):
         return psycopg2.connect(self.db_url)
 
-    def execute(self, cmd, fetch=True):
+    def do(self, handler: Handler):
+        """handler.processingで見分ける"""
+        if handler.processing == "execute":
+            return self._execute(*handler.args, **handler.kwargs)
+        elif handler.processing == "fetch_column":
+            return self.fetch_column(handler.table_name, *handler.args, **handler.kwargs)
+        elif handler.processing == "insert":
+            return self.insert(handler.table_name, *handler.args, **handler.kwargs)
+        elif handler.processing == "delete":
+            return self.delete(handler.table_name, *handler.args, **handler.kwargs)
+        elif handler.processing == "update":
+            return self.update(handler.table_name, *handler.args, **handler.kwargs)
+        else:
+            return None
+
+    def _execute(self, sql, fetch=True):
+        output = []
         self.conn = self.get_connection()
         cur = self.conn.cursor()
-        cur.execute(cmd)
+        cur.execute(sql)
         if fetch:
             data = cur.fetchall()
-            output = []
             for i in data:
-                output.append(list(i)[0])
+                output.append(i)
         cur.close()
 
         return output
 
-    def fetch_column(self, column, table, where=None, fetch=True):
+    def fetch_column(self, table, column, where=None, fetch=True):
+        output = []
         self.conn = self.get_connection()
         cur = self.conn.cursor()
         if where is not None:
@@ -31,19 +57,19 @@ class DBHandler:
 
         if fetch:
             data = cur.fetchall()
-            output = []
             for i in data:
                 output.append(list(i)[0])
         cur.close()
 
         return output
 
-    def insert(self, data, column, table):
-        columns = f"{column}".replace("'","")
+    def insert(self, table, data, column):
+        columns = f"{column}".replace("'", "")
         datas = f"{data}".replace("'", "")
 
         cmd = f"INSERT INTO {table} {columns} VALUES {datas};"
-        print(cmd)
+        if self.debug:
+            print(cmd)
 
         self.conn = self.get_connection()
         cur = self.conn.cursor()
@@ -51,7 +77,7 @@ class DBHandler:
         self.conn.commit()
         cur.close()
 
-    def delete(self, data, column, table):
+    def delete(self, table, data, column):
         columns = f"{column}".replace("'", "")
         datas = f"{data}".replace("'", "")
 
@@ -63,9 +89,7 @@ class DBHandler:
         self.conn.commit()
         cur.close()
 
-    def update(self, data, column, table, where=None):
-        columns = f"{column}".replace("'", "")
-        datas = f"{data}".replace("'", "")
+    def update(self, table, data, column, where=None):
 
         if where is not None:
             cmd = f"UPDATE {table} SET {column} = {data} WHERE {where}"
