@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
-import typing
 from dotenv import load_dotenv
 import os
 from pathlib import Path
 from .utils import database
+from .utils.database import Handler
 
 blacklist_table_name = "blacklist"
 attachables_table_name = "attachables"
@@ -24,12 +24,14 @@ def setup(bot):
 class RoleManager:
     def __init__(self, bot):
         self.bot = bot
-        self.handler = database.DBHandler(DB_URL)
+        self.handler = database.DBManager(DB_URL)
 
     @commands.command()
     async def attach(self, ctx, roles: commands.Greedy[discord.Role]):
         """指定した役職を自分に付与できます"""
-        attachables = self.handler.fetch_column("role_id", attachables_table_name, where=f"guild_id = {ctx.author.guild.id}")
+        attachables = self.handler.do(
+            Handler(attachables_table_name, "fetch_column", column="role_id",
+                    where=f"guild_id = {ctx.author.guild.id}"))
         for role in set(roles):
             if role.id in [r.id for r in ctx.author.roles]:
                 await ctx.send(":warning: あなたはすでにその役職を持っています")
@@ -45,13 +47,15 @@ class RoleManager:
     @commands.command(aliases=["remove"])
     async def detach(self, ctx, roles: commands.Greedy[discord.Role]):
         """指定した役職を外します"""
-        attachables = self.handler.fetch_column("role_id", attachables_table_name,
-                                                where=f"guild_id = {ctx.author.guild.id}")
+        attachables = self.handler.do(
+            Handler(attachables_table_name, "fetch_column", column="role_id",
+                    where=f"guild_id = {ctx.author.guild.id}"))
         for role in set(roles):
             if role not in ctx.author.roles:
                 await ctx.send(":warning: あなたはその役職を持っていません")
             elif role.id not in attachables:
-                await ctx.send(":warning: {role.name}は削除できません")
+                # f-stringになってなかった
+                await ctx.send(f":warning: {role.name}は削除できません")
             else:
                 try:
                     await ctx.author.remove_roles(role)
@@ -64,23 +68,26 @@ class RoleManager:
     async def add_attachables(self, ctx, roles: commands.Greedy[discord.Role]):
         """編集可能な役職を追加します"""
         for role in set(roles):
-            attachables = self.handler.fetch_column("role_id", attachables_table_name,
-                                                    where=f"guild_id = {ctx.author.guild.id}")
+            attachables = self.handler.do(
+                Handler(attachables_table_name, "fetch_column", column="role_id",
+                        where=f"guild_id = {ctx.author.guild.id}"))
             if role.id in attachables:
                 await ctx.send(f":warning: {role.name}はすでに編集可能です")
             else:
-                self.handler.insert((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
+                self.handler.do(Handler(attachables_table_name, "insert", data=(ctx.author.guild.id, role.id),
+                                        column=("guild_id", "role_id")))
                 await ctx.send(":white_check_mark: 役職を編集できるように設定しました")
 
     @commands.command(aliases=["removeattach"])
     @commands.has_permissions(manage_roles=True)
     async def remove_attachables(self, ctx, roles: commands.Greedy[discord.Role]):
         """編集可能な役職を削除します"""
-        attachables = self.handler.fetch_column("role_id", attachables_table_name,
-                                                where=f"guild_id = {ctx.author.guild.id}")
+        attachables = self.handler.do(Handler(attachables_table_name, "fetch_column", column="role_id",
+                                              where=f"guild_id = {ctx.author.guild.id}"))
         for role in set(roles):
             if role.id in attachables:
-                self.handler.delete((ctx.author.guild.id, role.id), ("guild_id", "role_id"), attachables_table_name)
+                self.handler.do(Handler(attachables_table_name, "delete", data=(ctx.author.guild.id, role.id),
+                                        column=("guild_id", "role_id")))
                 await ctx.send(":white_check_mark: 役職を編集できないように設定しました")
             else:
 
@@ -89,10 +96,11 @@ class RoleManager:
     @commands.command(aliases=["show"])
     async def show_attachables(self, ctx):
         """編集可能な役職の一覧を表示させます"""
-        attachables = self.handler.fetch_column("role_id", attachables_table_name,
-                                                where=f"guild_id = {ctx.author.guild.id}")
+        attachables = self.handler.do(Handler(attachables_table_name, "fetch_column", column="role_id",
+                                              where=f"guild_id = {ctx.author.guild.id}"))
         msg = ', '.join(r.name for r in ctx.guild.roles if r.id in attachables)
-        if msg != "":
+        # if msg != "": -> if msg:
+        if msg:
             await ctx.send(msg)
         else:
             await ctx.send("編集できる役職はありません")
