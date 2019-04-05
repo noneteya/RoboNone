@@ -19,7 +19,7 @@ class Invite:
         elif role in ctx.author.roles:
             await ctx.message.channel.send(":warning: すでに使用済みです")
         else:
-            await ctx.author.add_roles([role])
+            await ctx.author.add_roles(role)
             invite = await ctx.message.channel.create_invite(max_uses=1, max_age=18000, unique=True)
             await ctx.message.channel.send(":white_check_mark: DMに一度限り使用できる招待リンクを送信しました")
             await ctx.author.send(invite)
