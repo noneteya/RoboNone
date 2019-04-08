@@ -4,7 +4,7 @@ from discord.ext import commands
 class RoboNone(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix='?',
+            command_prefix=['?',"？"],
             description='A bot that greets the user back.',
         )
         self.load_cogs()
