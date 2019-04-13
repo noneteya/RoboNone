@@ -18,7 +18,7 @@ def has_prospect(member):
             return True
 
 
-class Approval:
+class Approval(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

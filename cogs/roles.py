@@ -21,7 +21,7 @@ def setup(bot):
     bot.add_cog(RoleManager(bot))
 
 
-class RoleManager:
+class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.handler = database.DBHandler(DB_URL)

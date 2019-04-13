@@ -23,7 +23,7 @@ def is_owner(ctx):
     return ctx.author == ctx.guild.owner_id
 
 
-class Moderation:
+class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
