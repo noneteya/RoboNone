@@ -22,8 +22,6 @@ class Approval(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def on_ready(self):
-        pass
 
     async def on_raw_reaction_add(self, payload):
         emoji = payload.emoji
