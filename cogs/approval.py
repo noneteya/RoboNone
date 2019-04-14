@@ -53,7 +53,7 @@ class Approval:
                 await message.author.add_roles(role)
                 role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
-                await message.channel.send(f"{message.author.mention} あなたは承認されました！")
+                m = await message.channel.send(f"{message.author.mention} あなたは承認されました！")
                 await message.delete()
                 await asyncio.sleep(15)
                 await m.delete()
