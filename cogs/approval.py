@@ -70,6 +70,8 @@ class Approval(commands.Cog):
 
             if x_mark_reaction and x_mark_reaction.count > 3:
                 m = await message.channel.send(f"{message.author.mention} 申請が否認されました")
+                role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
+                await message.author.remove_roles(role)
                 await message.delete()
                 await asyncio.sleep(15)
                 await m.delete()
