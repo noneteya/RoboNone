@@ -23,6 +23,7 @@ class Approval(commands.Cog):
         self.bot = bot
 
 
+    @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         emoji = payload.emoji
         channel = self.bot.get_channel(payload.channel_id)
