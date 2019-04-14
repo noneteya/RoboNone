@@ -6,7 +6,7 @@ def setup(bot):
     bot.add_cog(Invite(bot))
 
 
-class Invite:
+class Invite(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
