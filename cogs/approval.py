@@ -27,7 +27,6 @@ class Approval(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         emoji = payload.emoji
         channel = self.bot.get_channel(payload.channel_id)
-        message = await channel.get_message(payload.message_id)
         message = await channel.fetch_message(payload.message_id)
         if message.guild:
             member = message.guild.get_member(payload.user_id)
