@@ -47,15 +47,16 @@ class Approval(commands.Cog):
                 if reaction.emoji == "✅":
                     check_mark_reaction = reaction
 
+            o_users = await check_mark_reaction.users().flatten()
+            o_users_name = [user.name for user in o_users]
+
             if check_mark_reaction and check_mark_reaction.count > 3:
                 role = discord.utils.find(lambda m: m.name == 'player', member.guild.roles)
                 await message.author.add_roles(role)
                 role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
-                m = await message.channel.send(f"{message.author.mention} あなたは承認されました！")
+                await message.author.send(f"{message.author.mention} あなたは承認されました！")
                 await message.delete()
-                await asyncio.sleep(15)
-                await m.delete()
             else:
                 m = await message.channel.send(f"{member.mention} 申請を承認しました")
                 await asyncio.sleep(3)
@@ -68,13 +69,16 @@ class Approval(commands.Cog):
                 if reaction.emoji == "❎":
                     x_mark_reaction = reaction
 
+            x_users = await x_mark_reaction.users().flatten()
+            x_users_name = [user.name for user in x_users]
+
+
             if x_mark_reaction and x_mark_reaction.count > 3:
-                m = await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
+                await message.author.send(f"{message.author.mention} 申請が否認されました。"
+                                          f"twitter連携が正しくできているか、参加要件を満たしているかもう一度確認してください。")
                 await message.delete()
-                await asyncio.sleep(15)
-                await m.delete()
 
             else:
                 m = await message.channel.send(f"{member.mention} 申請を否認しました")
