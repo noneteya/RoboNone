@@ -55,6 +55,8 @@ class Approval:
                 await message.author.remove_roles(role)
                 await message.channel.send(f"{message.author.mention} あなたは承認されました！")
                 await message.delete()
+                await asyncio.sleep(15)
+                await m.delete()
             else:
                 m = await message.channel.send(f"{member.mention} 申請を承認しました")
                 await asyncio.sleep(3)
@@ -68,8 +70,11 @@ class Approval:
                     x_mark_reaction = reaction
 
             if x_mark_reaction and x_mark_reaction.count > 3:
-                await message.channel.send(f"{message.author.mention} 申請が否認されました")
+                m = await message.channel.send(f"{message.author.mention} 申請が否認されました")
                 await message.delete()
+                await asyncio.sleep(15)
+                await m.delete()
+
             else:
                 m = await message.channel.send(f"{member.mention} 申請を否認しました")
                 await asyncio.sleep(5)
