@@ -56,6 +56,7 @@ class Approval(commands.Cog):
                 role = discord.utils.find(lambda m: m.name == 'prospect', member.guild.roles)
                 await message.author.remove_roles(role)
                 await message.author.send(f"{message.author.mention} あなたは承認されました！")
+                await message.guild.owner.send(f"{message.author}さんが {o_users_name} によって承認されました。")
                 await message.delete()
             else:
                 m = await message.channel.send(f"{member.mention} 申請を承認しました")
@@ -78,6 +79,7 @@ class Approval(commands.Cog):
                 await message.author.remove_roles(role)
                 await message.author.send(f"{message.author.mention} 申請が否認されました。"
                                           f"twitter連携が正しくできているか、参加要件を満たしているかもう一度確認してください。")
+                await message.guild.owner.send(f"{message.author}さんが {x_users_name} によって否認されました ")
                 await message.delete()
 
             else:
