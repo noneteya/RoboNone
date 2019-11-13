@@ -1,0 +1,33 @@
+version: "3.7"
+
+volumes:
+  vscode_data:
+  psql_data:
+  venv_data:
+  pip_cache:
+
+
+services:
+  python:
+    build:
+      context: .
+      args:
+        - USER_ID=$DEV_ENV_UID
+        - GROUP_ID=$DEV_ENV_GID
+    restart: always
+    image: robonone-python:dev
+    volumes:
+      - ./:/app
+      - vscode_data:/home/pyuser/.vscode-server
+      - venv_data:/home/pyuser/.venv
+      - pip_cache:/home/pyuser/.cache
+
+  postgres:
+    restart: always
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASS
+      - POSTGRES_DB=$DATABASE_NAME
+    volumes:
+      - psql_data:/var/lib/postgresql/data:z
