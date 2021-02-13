@@ -1,0 +1,21 @@
+version: "3.7"
+
+
+services:
+  python:
+    build:
+      context: .
+    restart: always
+    volumes:
+      - ./:/app
+
+  postgres:
+    restart: always
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASS
+      - POSTGRES_DB=robo $DB_NAME
+    volumes:
+      - ./storage/postgresql/data:/var/lib/postgresql/data
+      - ./init_scripts:/docker-entrypoint-initdb.d
